@@ -1,31 +1,62 @@
 #include "csvreader.h"
 #include "filenotfoundexception.h"
 #include <iostream>
-#include <filesystem>
-#include <QFile>
 #include <QTextStream>
+#include <QFile>
 
 namespace Util {
+    csvReader::csvReader(std::string fileName) {
+        this->fileName = QString::fromStdString(fileName);
+    }
 
-    csvReader::csvReader(string fileName) {
-//        QFile inputFile = QFile(std::filesystem::path(fileName));
-//        try {
-//            if (!inputFile.open(QIODevice::ReadOnly))
-//                throw fileNotFoundException();
-//        } catch (fileNotFoundException e) {
-//            std::cout << e.what();
-//        }
+    void csvReader::readFile() {
+        QFile inputFile = QFile(fileName);
+        try {
+            if (!inputFile.open(QIODevice::ReadWrite))
+                throw fileNotFoundException();
+        } catch (fileNotFoundException e) {
+            std::cout << e.what();
+            return;
+        }
+        QTextStream in(&inputFile);
 
-//        QTextStream in(&inputFile);
-//        if (in.atEnd())
-//            return;
-//        QString args = in.readLine();
-//        while (!in.atEnd()) {
-//            QString line = in.readLine();
-//            string arg;
-//            while (getline(line, arg, ",")) {
-//            }
-//        }
-//        inputFile.close();
+        while (!in.atEnd()) {
+            QStringList row = in.readLine().split(",");
+            if (row.size() != 0)
+                data.append(row);
+        }
+        inputFile.close();
+    }
+
+    QList<QStringList> csvReader::getData() {
+        return data;
+    }
+
+    void csvReader::writeData(const QList<QStringList> &data) {
+        QFile inputFile = QFile(fileName);
+        try {
+            if (!inputFile.open(QIODevice::ReadWrite))
+                throw fileNotFoundException();
+        } catch (fileNotFoundException e) {
+            std::cout << e.what();
+            return;
+        }
+        QTextStream stream(&inputFile);
+
+        for (const QStringList &row : data) {
+            QStringList rowData;
+            for (const QString &cell : row) {
+                QString newCell = cell;
+                if (newCell.contains(',') || newCell.contains('"') || newCell.contains('\n'))
+                    newCell = "\"" + newCell.replace("\"", "\"\"") + "\"";
+                rowData.append(newCell);
+            }
+            stream << rowData.join(',') << "\n";
+        }
+        inputFile.close();
+    }
+
+    template <class T> void csvReader::printOut(T &arg) {
+        std::cout << arg << std::endl;
     }
 }

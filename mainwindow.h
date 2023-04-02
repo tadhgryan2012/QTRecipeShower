@@ -2,12 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <list>
 #include "recipe.h"
 #include "ingredient.h"
+#include <QListWidgetItem>
+#include <vector>
 
 class RecipeWindow;
 class ingredientWindow;
+class showOffWindow;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,9 +21,9 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    list<ingredient> getAllIngredients();
-    void addRecipe(recipe);
-    void addIngredients(list<ingredient>);
+    vector<ingredient*> getAllIngredients();
+    void addRecipe(recipe*);
+    void addIngredients(vector<ingredient*>);
     void setup();
 
 private slots:
@@ -30,13 +32,21 @@ private slots:
     void on_pushButton_clicked();
     void closeEvent(QCloseEvent *);
     void on_actionQuit_triggered();
+    void on_recipeDisplayBox_itemDoubleClicked(QListWidgetItem *item);
+    void on_exitButton_clicked();
+    void on_funButton_clicked();
 
 private:
-    list<recipe> recipes;
-    list<ingredient> ingredients;
+    vector<recipe*> recipes;
+    vector<ingredient*> ingredients;
     Ui::MainWindow *ui;
     RecipeWindow *rw;
     ingredientWindow *iw;
+    showOffWindow *sow;
     void exitWindow();
+    void initialSetup();
+    void save();
+    bool stob(string);
+    void editRecipe(QListWidgetItem*);
 };
 #endif // MAINWINDOW_H

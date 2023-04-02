@@ -13,26 +13,32 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
+        main.cpp
+        mainwindow.cpp
+        csvreader.cpp
+        filenotfoundexception.cpp
+        recipe.cpp
+        recipewindow.cpp
+        ingredientwindow.cpp
+        showoffwindow.cpp
+        ingredient.cpp
+        mainwindow.h
+        ingredientwindow.h
+        ingredient.h
+        showoffwindow.h
+        csvreader.h
+        filenotfoundexception.h
+        recipe.h
+        recipewindow.h
         mainwindow.ui
         recipeWindow.ui
         ingredientwindow.ui
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        ingredient.h
-        ingredient.cpp
+        showoffwindow.ui
         requirements.txt
         recipes.csv
-        csvreader.h
-        csvreader.cpp
-        filenotfoundexception.cpp
-        filenotfoundexception.h
-        recipe.h
-        recipe.cpp
-        recipewindow.h
-        recipewindow.cpp
-        ingredientwindow.h
-        ingredientwindow.cpp
+        ingredients.csv
+        baseingredient.h
+        IngredientAmount.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

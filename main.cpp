@@ -1,6 +1,4 @@
 #include "mainwindow.h"
-#include "ingredient.h"
-#include <string>
 
 #include <QApplication>
 

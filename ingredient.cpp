@@ -6,21 +6,26 @@ ingredient::ingredient(string name, bool isAlergy)
     this->name = name;
     this->isAlergy = isAlergy;
 }
-ingredient::ingredient(string name, double amount, bool isAlergy) {
+ingredient::ingredient(string name, int amount, bool isAlergy) {
     this->name = name;
     this->amount = amount;
     this->isAlergy = isAlergy;
 }
+ingredient::ingredient(ingredient &ingre) {
+    name = ingre.name;
+    amount = ingre.amount;
+    isAlergy = ingre.isAlergy;
+}
 string ingredient::getName() {
     return name;
 }
-double ingredient::getAmount() {
+int ingredient::getAmount() {
     return amount;
 }
 bool ingredient::getIsAlergy() {
     return isAlergy;
 }
-void ingredient::setAmount(double amount) {
+void ingredient::setAmount(int amount) {
     this->amount = amount;
 }
 ostream& operator<<(ostream& os, const ingredient& ingre) {

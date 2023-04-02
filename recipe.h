@@ -3,27 +3,30 @@
 
 #include "ingredient.h"
 #include <string>
-#include <list>
+#include <vector>
 
-using namespace std;
+using std::string;
 
 class recipe {
 private:
-    string steps;
-    list<ingredient> ingredients;
-    list<double> ratio;
-    bool isForTin;
     string name;
+    string steps;
+    vector<ingredient*> ingredients;
+    bool isForTin;
 public:
-    recipe(string, string, list<ingredient>, list<double>, bool);
-    recipe();
+    recipe(string, string, vector<ingredient*>, bool);
+    recipe(string);
+    recipe(recipe&);
     string getName();
+    string getSteps();
+    vector<ingredient*> getIngredients();
+    bool getIsForTin();
     void setName(string);
     void setSteps(string);
-    void setIngredients(list<ingredient>);
-    void setRatio(list<double>);
-    void addIngredient(ingredient);
+    void setIngredients(vector<ingredient*>);
+    void addIngredient(ingredient*);
     void setIsForTin(bool);
+    friend bool operator==(const recipe&, const recipe&);
 };
 
 #endif // RECIPE_H

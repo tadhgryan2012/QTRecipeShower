@@ -2,35 +2,53 @@
 #include "ui_recipewindow.h"
 #include "ingredient.h"
 #include <algorithm>
+#include <iostream>
 
 RecipeWindow::RecipeWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::RecipeWindow) {
     ui->setupUi(this);
     mw = dynamic_cast<MainWindow*>(parent);
     setup();
 }
+RecipeWindow::RecipeWindow(QWidget *parent, recipe *rec) : QMainWindow(parent), ui(new Ui::RecipeWindow) {
+    ui->setupUi(this);
+    mw = dynamic_cast<MainWindow*>(parent);
 
+    ui->nameBox->setText(QString::fromStdString(rec->getName()));
+    ui->stepsTextEdit->setPlainText(QString::fromStdString(rec->getSteps()));
+    ingresOn = rec->getIngredients();
+    ui->tinRadioButton->setChecked(rec->getIsForTin());
+    setup();
+    show();
+}
 RecipeWindow::~RecipeWindow() {
     delete ui;
 }
 
-ingredient RecipeWindow::getElement(list<ingredient> myList, string target) {
-    for (auto elem : myList) {
-        if (elem.getName() == target)
+ingredient* RecipeWindow::getElement(vector<ingredient*> &myList, string target) {
+    for (ingredient* elem : myList) {
+        if (elem->getName().compare(target) == 0)
             return elem;
     }
-    return ingredient("", false);
+    return new ingredient("", false);
 }
 
-void RecipeWindow::on_enterButton_clicked() {
+void RecipeWindow::enterIngredient() {
     string name = ui->ingredientBox->currentText().toStdString();
-    double amount = ui->amountSpinBox->value();
+    int amount = ui->amountSpinBox->value();
 
     if (amount <= 0)
         return;
 
-    ingresOn.push_back(getElement(allIngredients, name));
+    ingredient* ingre = getElement(allIngredients, name);
+    ingre->setAmount(amount);
+
+    ingresOn.push_back(ingre);
     ui->ingredientList->addItem(QString::fromStdString(name));
     ui->amountList->addItem(QString::number(amount));
+}
+
+void RecipeWindow::on_enterButton_clicked() {
+    enterIngredient();
 }
 
 void RecipeWindow::on_exitButton_clicked() {
@@ -52,39 +70,58 @@ void RecipeWindow::exitWindow() {
     mw->setup();
 }
 
-list<double> RecipeWindow::getRatios(list<ingredient> &ingres) {
-    list<double> ratios;
-    double total = 0;
-    for (ingredient ingre : ingres) {
-        total += ingre.getAmount();
-    }
-    for (ingredient ingre : ingres) {
-        ratios.push_back(ingre.getAmount() / total);
-    }
-    return ratios;
-}
-
 void RecipeWindow::save() {
     string name = ui->nameBox->text().toStdString();
     string steps = ui->stepsTextEdit->toPlainText().toStdString();
-    list<ingredient> ingres = ingresOn;
-    list<double> ratios = getRatios(ingres);
     bool isTin = ui->tinRadioButton->isChecked();
 
     if (name.empty())
         return;
 
-    recipe newRec = recipe(name, steps, ingres, ratios, isTin);
+    recipe *newRec = new recipe(name, steps, ingresOn, isTin);
+
     mw->addRecipe(newRec);
 }
 
 void RecipeWindow::setup() {
     allIngredients = mw->getAllIngredients();
-//    allIngredients.push_back(ingredient("Sugar", false));
-//    allIngredients.push_back(ingredient("Flour", false));
-//    allIngredients.push_back(ingredient("Baking Soda", false));
-    for (ingredient ingre : allIngredients) {
-        ui->ingredientBox->addItem(QString::fromStdString(ingre.getName()));
+    for (ingredient* ingrePT : allIngredients) {
+        ui->ingredientBox->addItem(QString::fromStdString(ingrePT->getName()));
     }
     ui->tinRadioButton->click();
+
+    for (ingredient *ingre : ingresOn) {
+        string name = ingre->getName();
+        int amount = ingre->getAmount();
+        ui->ingredientList->addItem(QString::fromStdString(name));
+        ui->amountList->addItem(QString::number(amount));
+    }
+}
+
+void RecipeWindow::on_ingredientList_itemDoubleClicked(QListWidgetItem *item) {
+    string name = item->text().toStdString();
+
+    ingredient* ingre;
+    int i;
+    bool isFound = false;
+    for (i=0; i<ingresOn.size(); i++) {
+        if (name == ingresOn.at(i)->getName()) {
+            ingre = ingresOn.at(i);
+            isFound = true;
+            break;
+        }
+    }
+    if (!isFound)
+        return;
+
+    ui->ingredientBox->setCurrentIndex(i);
+    ui->amountSpinBox->setValue(ingre->getAmount());
+
+    int index = ui->ingredientList->row(item);
+
+    std::cout << "Index: " << index << std::endl;
+
+    ingresOn.erase(ingresOn.begin() + index);
+    ui->ingredientList->takeItem(index);
+    ui->amountList->takeItem(index);
 }

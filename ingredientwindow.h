@@ -5,7 +5,7 @@
 #include <QListWidgetItem>
 #include "mainwindow.h"
 #include "ingredient.h"
-#include <sstream>
+#include <vector>
 
 namespace Ui {
 class ingredientWindow;
@@ -20,19 +20,16 @@ public:
 
 private slots:
     void on_saveButton_clicked();
-
     void on_addButton_clicked();
-
-    void on_ingredientsListWidget_itemDoubleClicked(QListWidgetItem *item);
-
+    void on_ingredientsListWidget_itemDoubleClicked(QListWidgetItem*);
     void on_nameBox_returnPressed();
 
 private:
-    list<ingredient> allIngredients;
+    vector<ingredient*> allIngredients;
     Ui::ingredientWindow *ui;
     MainWindow *mw;
-    std::stringstream ss;
     void closeEvent(QCloseEvent*);
+    void addItemToWindow(ingredient*);
     void exitWindow();
     void save();
     void setup();

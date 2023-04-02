@@ -1,18 +1,21 @@
 #ifndef CSVREADER_H
 #define CSVREADER_H
 
-#include <string>
-#include <list>
-
-using namespace std;
+#include <QStringList>
+#include <QList>
+#include <QString>
 
 namespace Util {
     class csvReader {
     private:
-        string fileName;
-        list<list<string>> data;
+        QString fileName;
+        QList<QStringList> data;
     public:
-        csvReader(string);
+        csvReader(std::string);
+        void readFile();
+        QList<QStringList> getData();
+        void writeData(const QList<QStringList>&);
+        template <class T> void printOut(T&);
     };
 }
 #endif // CSVREADER_H

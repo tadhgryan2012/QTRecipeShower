@@ -2,22 +2,25 @@
 #define INGREDIANT_H
 
 #include <string>
+#include "baseingredient.h"
+#include "IngredientAmount.h"
 
 using namespace std;
 
-class ingredient {
+class ingredient : BaseIngredient, IngredientAmount {
 private:
     string name;
-    double amount;
+    int amount;
     bool isAlergy;
 
 public:
     ingredient(string, bool);
-    ingredient(string, double, bool);
+    ingredient(string, int, bool);
+    ingredient(ingredient&);
     string getName();
-    double getAmount();
+    int getAmount();
     bool getIsAlergy();
-    void setAmount(double);
+    void setAmount(int);
 
     friend ostream& operator<<(ostream&, const ingredient&);
     friend bool operator==(const ingredient&, const ingredient&);
